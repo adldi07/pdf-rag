@@ -1,6 +1,11 @@
 import { Worker } from 'bullmq';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 import { OpenAIEmbeddings } from "@langchain/openai";
+import { QdrantVectorStore } from "@langchain/qdrant";
+
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf"
 
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
@@ -18,27 +23,38 @@ const worker = new Worker('file-upload-queue', async (job) => {
                 const loader = new PDFLoader(path);
                 const docs = await loader.load();
 
-                console.log('Extracted PDF documents:');
+                // console.log('Extracted PDF documents:');
                 // console.log('Total pages:', docs);
 
-                const s = 5000 ;
-                const splitter = new RecursiveCharacterTextSplitter({ 
-                    chunkSize: s, 
-                    chunkOverlap: 0 
+                const s = 500;
+                const splitter = new RecursiveCharacterTextSplitter({
+                    chunkSize: s,
+                    chunkOverlap: 0
                 });
-                const texts = await splitter.splitDocuments(docs);
-                console.log('Split texts using chunk size', s, ':', texts.length, 'chunks');
 
-                for (const [index, text] of texts.entries()) {
-                    console.log(`Chunk ${index + 1} preview:`, text.pageContent + '...');
-                }
+                const texts = await splitter.splitDocuments(docs);
+                // console.log('Split texts using chunk size', s, ':', texts.length, 'chunks');
+
+                const embeddings = new OpenAIEmbeddings({
+                    model: "text-embedding-3-large",
+                    openAIApiKey: process.env.OPENAI_API_KEY,
+                });
+
+                const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
+                    url: process.env.QDRANT_URL,
+                    collectionName: "pdf-rag",
+                });
+
                 // console.log('First chunk preview:', texts[0].pageContent.substring(0, 200) + '...');
 
                 // console.log('Split texts:', texts);
 
+                const result = await vectorStore.addDocuments(texts);
+                console.log('Documents added to Qdrant vector store:', result);
+
             }
             catch (error) {
-                console.error(`Error processing file: ${error}`);
+                console.error( `Error processing file: ${error}`);
             }
         }
         await processFile();

@@ -2,6 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import { Queue } from 'bullmq';
+import dotenv from 'dotenv';
+import {OpenAIEmbeddings} from "@langchain/openai";
+import {QdrantVectorStore} from "@langchain/qdrant";
+
+dotenv.config();
 
 const queue = new Queue('file-upload-queue',
     {
@@ -40,6 +45,35 @@ app.post('/upload/pdf', upload.single('pdf'), async (req, res) => {
 
     return res.send("File uploaded successfully");
 });
+
+app.get('/chat', async (req, res) => {
+    const userQuery = `what is lorem ipsum?`;
+
+
+    const embeddings = new OpenAIEmbeddings({
+        model: "text-embedding-3-large",
+        openAIApiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
+        url: process.env.QDRANT_URL,
+        collectionName: "pdf-rag",
+    });
+
+
+    const retriever = vectorStore.asRetriever({
+        // Optional filtering parameters can be added here
+
+        k: 2,
+    });
+
+    const result = await retriever.invoke(userQuery);
+    console.log('Retriever response:', result);
+
+    return res.json({ response: result });
+});
+
+
 
 const PORT = process.env.PORT || 5000;
 
