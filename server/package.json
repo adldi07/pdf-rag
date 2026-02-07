@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch index.js"
+    "dev": "node --watch index.js",
+    "dev:worker": "node --watch worker.js"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +13,7 @@
   "packageManager": "pnpm@10.27.0",
   "dependencies": {
     "@types/node": "^25.2.1",
+    "bullmq": "^5.67.3",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "multer": "^2.0.2"
