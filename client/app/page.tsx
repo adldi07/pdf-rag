@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import {FileUpload} from './components/file-upload';
+import { Chat } from './components/chat';
 
 export default function Home() {
   const [uploading, setUploading] = useState(false);
@@ -58,7 +59,7 @@ export default function Home() {
           </div>
         </div>
         <div className="w-[70vw] min-h-screen border-l-2">
-          hi2 
+          <Chat />
         </div>
       </div>
     </div>

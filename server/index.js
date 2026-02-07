@@ -3,6 +3,7 @@ import cors from 'cors';
 import multer from 'multer';
 import { Queue } from 'bullmq';
 import dotenv from 'dotenv';
+import OpenAI from 'openai';
 import {OpenAIEmbeddings} from "@langchain/openai";
 import {QdrantVectorStore} from "@langchain/qdrant";
 
@@ -63,14 +64,36 @@ app.get('/chat', async (req, res) => {
 
     const retriever = vectorStore.asRetriever({
         // Optional filtering parameters can be added here
-
         k: 2,
     });
 
     const result = await retriever.invoke(userQuery);
+
+    const SYSTEM_PROMPT = `You are a helpful assistant that answers questions based on the following retrieved information: ${result}`;
+
+    const client = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const chatRes = await client.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+            {
+                role: "system",
+                content: SYSTEM_PROMPT,
+            },
+            {
+                role: "user",
+                content: `Question: ${userQuery}`,
+            }
+        ],
+    });
     console.log('Retriever response:', result);
 
-    return res.json({ response: result });
+    return res.json({ 
+        response: chatRes.choices[0].message.content,
+        retrievedInfo: result,
+    });
 });
 
 
