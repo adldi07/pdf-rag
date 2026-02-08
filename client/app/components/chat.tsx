@@ -2,9 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Send, MessageCircle } from 'lucide-react';
-import { config } from 'dotenv';
-
-config();
 
 
 
@@ -46,7 +43,7 @@ export function Chat() {
       const params = new URLSearchParams({
         message: userMessage.content,
       });
-      const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
       const response = await fetch(`${backendUrl}/chat?${params}`, {
         method: 'GET',
       });

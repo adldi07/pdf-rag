@@ -31,7 +31,7 @@ const worker = new Worker('file-upload-queue', async (job) => {
                     chunkSize: s,
                     chunkOverlap: 0
                 });
-
+                
                 const texts = await splitter.splitDocuments(docs);
                 // console.log('Split texts using chunk size', s, ':', texts.length, 'chunks');
 
