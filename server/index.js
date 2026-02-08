@@ -4,16 +4,16 @@ import multer from 'multer';
 import { Queue } from 'bullmq';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
-import {OpenAIEmbeddings} from "@langchain/openai";
-import {QdrantVectorStore} from "@langchain/qdrant";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { QdrantVectorStore } from "@langchain/qdrant";
 
 dotenv.config();
 
 const queue = new Queue('file-upload-queue',
     {
         connection: {
-            host: 'localhost',
-            port: 6379,
+            redisURL: process.env.REDIS_URL,
+            // if any
         },
     }
 );
@@ -91,7 +91,7 @@ app.get('/chat', async (req, res) => {
     });
     console.log('Retriever response:', result);
 
-    return res.json({ 
+    return res.json({
         response: chatRes.choices[0].message.content,
         retrievedInfo: result,
     });
