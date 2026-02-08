@@ -86,8 +86,8 @@ export function FileUpload({
 	}, [disabled]);
 
 	return (
-		<div className="w-full justify-center ">
-			<label className="mb-2 block text-sm font-medium text-slate-900">
+		<div className="w-full">
+			<label className="mb-3 block text-sm font-semibold text-slate-900">
 				{label}
 			</label>
 			<div
@@ -104,15 +104,27 @@ export function FileUpload({
 					}
 				}}
 				aria-disabled={disabled}
-				className={`flex min-h-[140px] w-full flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-8 text-center transition ${
-					isDragActive ? 'border-slate-900 bg-slate-50' : 'border-slate-300 bg-white'
-				} ${disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:border-slate-900'}`}
+				className={`flex min-h-[180px] w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed px-6 py-12 text-center transition-all ${
+					isDragActive ? 'border-blue-500 bg-blue-50 shadow-lg' : 'border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50'
+				} ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
 			>
-				<p className="text-sm font-semibold text-slate-900">{statusText}</p>
+				<div className="mb-3">
+					<svg className="w-10 h-10 mx-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+					</svg>
+				</div>
+				<p className="text-sm font-semibold text-slate-900 mb-1">{statusText}</p>
+				<p className="text-xs text-slate-500">{helperText}</p>
 				{selectedFiles.length > 0 && (
-					<ul className="mt-3 space-y-1 text-xs text-slate-600">
+					<ul className="mt-4 space-y-2 w-full">
 						{selectedFiles.map((file) => (
-							<li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
+							<li key={`${file.name}-${file.lastModified}`} className="flex items-center justify-center gap-2 text-xs text-slate-600 bg-slate-50 p-2 rounded-lg">
+								<svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+									<path fillRule="evenodd" d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm6-3a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" clipRule="evenodd" />
+									<path d="M8 6a4 4 0 110 8H2.5A2.5 2.5 0 010 11.5V4a2 2 0 012-2h8a2 2 0 012 2v.5" />
+								</svg>
+								{file.name}
+							</li>
 						))}
 					</ul>
 				)}
@@ -123,7 +135,7 @@ export function FileUpload({
 						openFileDialog();
 					}}
 					disabled={disabled}
-					className="mt-4 rounded-full border border-slate-900 px-4 py-2 text-xs font-semibold text-slate-900 transition hover:bg-slate-900 hover:text-white disabled:border-slate-400 disabled:text-slate-400 disabled:hover:bg-transparent"
+					className="mt-6 rounded-full bg-blue-600 text-white px-6 py-2 text-sm font-semibold transition-all hover:bg-blue-700 disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
 				>
 					Choose file{multiple ? 's' : ''}
 				</button>

@@ -48,7 +48,8 @@ app.post('/upload/pdf', upload.single('pdf'), async (req, res) => {
 });
 
 app.get('/chat', async (req, res) => {
-    const userQuery = `what is lorem ipsum?`;
+    const userQuery = req.query.message;
+    // const userQuery = `what is lorem ipsum?`;
 
 
     const embeddings = new OpenAIEmbeddings({

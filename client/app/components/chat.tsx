@@ -38,7 +38,10 @@ export function Chat() {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/chat?query=' + encodeURIComponent(input), {
+      const params = new URLSearchParams({
+        message: userMessage.content,
+      });
+      const response = await fetch(`http://localhost:5000/chat?${params}`, {
         method: 'GET',
       });
 
