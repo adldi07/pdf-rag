@@ -4,9 +4,6 @@ import { useState } from 'react';
 import {FileUpload} from './components/file-upload';
 import { Chat } from './components/chat';
 import { CheckCircle, AlertCircle, Clock } from 'lucide-react';
-import { config } from 'dotenv';
-
-config();
 
 export default function Home() {
   const [uploading, setUploading] = useState(false);
@@ -27,7 +24,7 @@ export default function Home() {
     setMessageType('');
 
     try {
-      const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
       const response = await fetch(`${backendUrl}/upload/pdf`, {
         method: 'POST',
         body: formData,
