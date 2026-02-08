@@ -13,6 +13,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.27.0",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.985.0",
     "@langchain/community": "^1.1.12",
     "@langchain/core": "^1.1.19",
     "@langchain/openai": "^1.2.5",
@@ -23,10 +24,12 @@
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
+    "fs": "0.0.1-security",
     "langchain": "^1.2.18",
     "multer": "^2.0.2",
     "nodemon": "^3.1.11",
     "openai": "^6.18.0",
+    "path": "^0.12.7",
     "pdf-parse": "^1.1.4"
   }
 }
