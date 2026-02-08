@@ -10,11 +10,14 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 dotenv.config();
 
-const queue = new Queue('file-upload-queue',
-    {
-        connection: process.env.REDIS_URL,
+const queue = new Queue('file-upload-queue', {
+    connection: {
+        url: process.env.REDIS_URL,
+        tls: {
+            rejectUnauthorized: false // Required for some older Node versions/environments with Upstash TLS
+        }
     }
-);
+});
 
 // const storage = multer.diskStorage({
 //     destination: function (req, file , cb) {
@@ -69,6 +72,9 @@ app.get('/', (req, res) => {
 });
 
 app.post('/upload/pdf', upload.single('pdf'), async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+    }
 
     try {
         const key = `temp/${Date.now()}-${req.file.originalname}`;
@@ -84,10 +90,12 @@ app.post('/upload/pdf', upload.single('pdf'), async (req, res) => {
 
         const fileUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
-        await queue.add('file-ready', {
+        console.log(`Adding job to queue for file: ${req.file.originalname}`);
+        const job = await queue.add('file-ready', {
             fileUrl,
             fileName: req.file.originalname,
         });
+        console.log(`Job added: ${job.id}`);
 
         return res.send("File uploaded successfully");
 

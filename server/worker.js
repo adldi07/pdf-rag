@@ -74,6 +74,11 @@ const worker = new Worker('file-upload-queue', async (job) => {
     }
 },
     {
-        connection: process.env.REDIS_URL,
+        connection: {
+            url: process.env.REDIS_URL,
+            tls: {
+                rejectUnauthorized: false
+            }
+        },
     }
 );
