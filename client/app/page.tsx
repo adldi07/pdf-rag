@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FileUpload } from './components/file-upload';
 import { Chat } from './components/chat';
-import { CheckCircle, AlertCircle, Clock, FileText, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
+import { CheckCircle, AlertCircle, Clock, FileText, Lock, ArrowRight, ShieldCheck, Menu, X } from 'lucide-react';
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from '@clerk/nextjs';
 
 import { useAuth } from '@clerk/nextjs';
@@ -13,6 +13,7 @@ export default function Home() {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error' | ''>('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleFilesSelected = async (files: File[]) => {
     if (files.length === 0 || uploading || !userId) return;
@@ -136,8 +137,29 @@ export default function Home() {
       </SignedOut>
 
       <SignedIn>
-        {/* Application Dashboard */}
-        <div className="w-80 h-full bg-white flex flex-col items-center pt-8 px-6 border-r border-slate-200/60 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.05)] animate-fadeIn shrink-0 overflow-y-auto">
+        {/* Mobile Toggle Button */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="lg:hidden fixed bottom-6 right-6 z-50 p-4 bg-blue-600 text-white rounded-full shadow-2xl active:scale-95 transition-all"
+        >
+          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+
+        {/* Backdrop for mobile */}
+        {sidebarOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {/* Application Dashboard (Sidebar) */}
+        <div className={`
+          fixed inset-y-0 left-0 z-40 w-80 bg-white flex flex-col items-center pt-20 lg:pt-8 px-6 border-r border-slate-200/60 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.05)] 
+          transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          lg:static lg:h-full shrink-0 overflow-y-auto
+        `}>
           {/* Section Label */}
           <div className="w-full max-w-sm mb-8">
             <div className="flex items-center gap-2 mb-2">

@@ -222,7 +222,7 @@ app.get('/chat', async (req, res) => {
         : "No relevant information found in the documents.";
 
     const SYSTEM_PROMPT = `You are a helpful assistant that answers questions based on the provided document context.
-If the information is not in the context, be honest and tell the user that the document doesn't seem to contain that information.
+If the information is not in the context, be honest and tell the user that the document doesn't seem to contain that information ----
 
 CONTEXT:
 ${contextText}  ----- as i am building a rag application and i printing the retrieved context in the frontend as it is, so be return the answer in a proper format and, be specific and concise in your answers.`;

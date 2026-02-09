@@ -6,7 +6,7 @@
   "scripts": {
     "start:all": "npm run dev & npm run start:worker",
     "dev": "cd server && nodemon index.js",
-    "startfrontend": "cd frontend && npm run dev",
+    "startfrontend": "cd client && npm run dev",
     "startserver": "cd server && node index.js",
     "startworker": "cd server && node worker.js"
   },
