@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import http from 'http';
 
 dotenv.config();
 
@@ -104,3 +105,12 @@ const worker = new Worker('file-upload-queue', async (job) => {
         },
     }
 );
+
+// Health check server for Render Free Tier
+const port = process.env.PORT || 10000;
+http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end('Worker is running');
+}).listen(port, () => {
+    console.log(`Worker health check listening on port ${port}`);
+});
