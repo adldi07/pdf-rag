@@ -203,13 +203,29 @@ app.get('/chat', async (req, res) => {
     try {
         result = await retriever.invoke(userQuery);
         console.log(`[Chat] Filtered search returned ${result.length} chunks.`);
+        if (result.length > 0) {
+            console.log(`[Chat] First chunk snippet: ${result[0].pageContent.substring(0, 100)}...`);
+        } else {
+            console.log(`[Chat] WARNING: No documents found for userId: ${userId}`);
+        }
     } catch (e) {
         console.error("❌ Retriever Error Details:", e.message);
         // Minimal fallback for safety
+        console.log("[Chat] Falling back to unfiltered similarity search...");
         result = await vectorStore.similaritySearch(userQuery, 2);
+        console.log(`[Chat] Fallback search returned ${result.length} chunks.`);
     }
 
-    const SYSTEM_PROMPT = `You are a helpful assistant that answers questions based on the following retrieved information: ${result}`;
+    // Convert retrieved context chunks into a single readable string
+    const contextText = result.length > 0
+        ? result.map(doc => doc.pageContent).join("\n\n---\n\n")
+        : "No relevant information found in the documents.";
+
+    const SYSTEM_PROMPT = `You are a helpful assistant that answers questions based on the provided document context.
+If the information is not in the context, be honest and tell the user that the document doesn't seem to contain that information.
+
+CONTEXT:
+${contextText}  ----- as i am building a rag application and i printing the retrieved context in the frontend as it is, so be return the answer in a proper format and, be specific and concise in your answers.`;
 
     const client = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
