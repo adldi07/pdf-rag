@@ -7,6 +7,20 @@ import http from 'http';
 
 dotenv.config();
 
+// 1. START HEALTH CHECK IMMEDIATELY (For Render Free Tier)
+const port = process.env.PORT || 10000;
+http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end('Worker is running');
+}).listen(port, () => {
+    console.log(`🚀 Health Check Server LIVE on port ${port}`);
+});
+
+console.log("Checking Environment Variables...");
+console.log("- REDIS_URL:", process.env.REDIS_URL ? "✅ Found" : "❌ MISSING");
+console.log("- OPENAI_API_KEY:", process.env.OPENAI_API_KEY ? "✅ Found" : "❌ MISSING");
+console.log("- AWS_S3_BUCKET:", process.env.AWS_S3_BUCKET ? "✅ Found" : "❌ MISSING");
+
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
@@ -20,6 +34,7 @@ const s3 = new S3Client({
     },
 });
 
+console.log("Initializing BullMQ Worker...");
 const worker = new Worker('file-upload-queue', async (job) => {
     console.log(`[Queue] Received job: ${job.id} for ${job.data.fileName}`);
     if (job.name === 'file-ready') {
@@ -105,12 +120,3 @@ const worker = new Worker('file-upload-queue', async (job) => {
         },
     }
 );
-
-// Health check server for Render Free Tier
-const port = process.env.PORT || 10000;
-http.createServer((req, res) => {
-    res.writeHead(200);
-    res.end('Worker is running');
-}).listen(port, () => {
-    console.log(`Worker health check listening on port ${port}`);
-});
