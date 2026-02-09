@@ -47,7 +47,7 @@ export default function Home() {
   };
 
   return (
-    <div className="h-[calc(100vh-64px)] w-screen flex bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900 overflow-hidden">
+    <div className="h-[calc(100vh-52px)] w-screen flex bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900 overflow-hidden">
       <SignedOut>
         {/* Modern Premium Landing Page */}
         <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
@@ -133,7 +133,7 @@ export default function Home() {
 
       <SignedIn>
         {/* Application Dashboard */}
-        <div className="w-[30vw] h-full bg-white flex flex-col items-center pt-12 px-8 border-r border-slate-200/60 shadow-xl shadow-slate-200/20 animate-fadeIn shrink-0 overflow-y-auto">
+        <div className="w-80 h-full bg-white flex flex-col items-center pt-8 px-6 border-r border-slate-200/60 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.05)] animate-fadeIn shrink-0 overflow-y-auto">
           {/* Section Label */}
           <div className="w-full max-w-sm mb-8">
             <div className="flex items-center gap-2 mb-2">
@@ -210,7 +210,7 @@ export default function Home() {
         </div>
 
         {/* Right Section - Chat */}
-        <div className="w-[70vw] h-full bg-slate-50/30 animate-fadeIn">
+        <div className="flex-1 h-full bg-slate-50/30 animate-fadeIn overflow-hidden">
           <Chat />
         </div>
       </SignedIn>

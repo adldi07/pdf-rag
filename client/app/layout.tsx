@@ -35,34 +35,34 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <header className="flex justify-between items-center px-8 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <FileText className="w-5 h-5 text-white" />
+          <header className="flex justify-between items-center px-6 h-13 bg-white/80 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
+                <FileText className="w-4 h-4 text-white" />
               </div>
-              <span className="text-xl font-black text-slate-900 tracking-tight">PDF<span className="text-blue-600">RAG</span></span>
+              <span className="text-lg font-black text-slate-900 tracking-tighter">PDF<span className="text-blue-600">RAG</span></span>
             </div>
 
             <div className="flex items-center gap-4">
               <SignedOut>
                 <SignInButton mode="modal">
-                  <button className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer">
+                  <button className="text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer">
                     Sign In
                   </button>
                 </SignInButton>
                 <SignUpButton mode="modal">
-                  <button className="bg-slate-900 text-white px-5 py-2 rounded-xl font-bold text-sm hover:bg-slate-800 transition-all hover:shadow-lg active:scale-95 cursor-pointer">
+                  <button className="bg-slate-900 text-white px-4 py-1.5 rounded-lg font-bold text-xs hover:bg-slate-800 transition-all cursor-pointer">
                     Get Started
                   </button>
                 </SignUpButton>
               </SignedOut>
               <SignedIn>
-                <div className="flex items-center gap-4">
-                  <div className="h-8 w-[1px] bg-slate-200"></div>
+                <div className="flex items-center gap-3">
+                  <div className="h-6 w-[1px] bg-slate-200"></div>
                   <UserButton
                     appearance={{
                       elements: {
-                        userButtonAvatarBox: "w-9 h-9 rounded-xl border-2 border-white shadow-md"
+                        userButtonAvatarBox: "w-8 h-8 rounded-lg border border-white shadow-sm"
                       }
                     }}
                   />

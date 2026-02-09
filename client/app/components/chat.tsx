@@ -82,17 +82,17 @@ export function Chat() {
   return (
     <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 px-6 py-4 sticky top-0 z-10">
+      <div className="bg-white/80 backdrop-blur-md border-b border-slate-200/50 px-5 py-3 sticky top-0 z-10">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-blue-600 rounded-xl shadow-lg shadow-blue-500/20">
-              <MessageCircle className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-blue-600 rounded-lg shadow-md shadow-blue-500/10">
+              <MessageCircle className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight">PDF Intelligence</h2>
-              <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                <p className="text-xs font-semibold text-slate-500">AI Expert Online</p>
+              <h2 className="text-sm font-bold text-slate-900 tracking-tight">AI Intelligence</h2>
+              <div className="flex items-center gap-1">
+                <span className="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"></span>
+                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">System Online</p>
               </div>
             </div>
           </div>
