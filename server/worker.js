@@ -130,6 +130,10 @@ const worker = new Worker('file-upload-queue', async (job) => {
                 }
             }));
 
+            if (textsWithAuth.length > 0) {
+                console.log("DEBUG: First chunk metadata structure:", JSON.stringify(textsWithAuth[0].metadata, null, 2));
+            }
+
             const result = await vectorStore.addDocuments(textsWithAuth);
             console.log('✅ SUCCESS: Documents added to Qdrant vector store:', result);
 

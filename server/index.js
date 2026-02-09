@@ -48,6 +48,37 @@ const upload = multer({
 
 const app = express();
 
+// Initialize Qdrant Indexes
+const initializeQdrant = async () => {
+    try {
+        const client = new QdrantVectorStore(new OpenAIEmbeddings(), {
+            url: process.env.QDRANT_URL,
+            apiKey: process.env.QDRANT_API,
+            collectionName: "pdf-rag",
+        }).client;
+
+        console.log("🛠️ Checking Qdrant Payload Indexes...");
+
+        await client.createPayloadIndex('pdf-rag', {
+            field_name: 'metadata.userId',
+            field_schema: 'keyword',
+            wait: true,
+        });
+
+        await client.createPayloadIndex('pdf-rag', {
+            field_name: 'metadata.uploadId',
+            field_schema: 'keyword',
+            wait: true,
+        });
+
+        console.log("✅ Qdrant Indexes Verified/Created.");
+    } catch (err) {
+        console.warn("⚠️ Qdrant index initialization note:", err.message);
+    }
+};
+
+initializeQdrant();
+
 // Configure CORS for production
 const allowedOrigins = [
     process.env.FRONTEND_URL,
@@ -131,6 +162,11 @@ app.post('/upload/pdf', upload.single('pdf'), async (req, res) => {
 app.get('/chat', async (req, res) => {
     const userQuery = req.query.message;
     const userId = req.query.userId;
+
+    if (!userId) {
+        return res.status(400).json({ error: "Authentication required: userId missing" });
+    }
+
     console.log(`[Chat] Query from User: ${userId} - "${userQuery}"`);
 
     const embeddings = new OpenAIEmbeddings({
@@ -145,22 +181,33 @@ app.get('/chat', async (req, res) => {
         collectionName: "pdf-rag",
     });
 
+    const filter = {
+        must: [
+            {
+                key: "metadata.userId",
+                match: {
+                    value: userId
+                }
+            }
+        ]
+    };
+
+    console.log("[Chat] Using Filter:", JSON.stringify(filter, null, 2));
 
     const retriever = vectorStore.asRetriever({
-        filter: {
-            must: [
-                {
-                    key: "metadata.userId",
-                    match: {
-                        value: userId
-                    }
-                }
-            ]
-        },
-        k: 2,
+        filter: filter,
+        k: 5,
     });
 
-    const result = await retriever.invoke(userQuery);
+    let result = [];
+    try {
+        result = await retriever.invoke(userQuery);
+        console.log(`[Chat] Filtered search returned ${result.length} chunks.`);
+    } catch (e) {
+        console.error("❌ Retriever Error Details:", e.message);
+        // Minimal fallback for safety
+        result = await vectorStore.similaritySearch(userQuery, 2);
+    }
 
     const SYSTEM_PROMPT = `You are a helpful assistant that answers questions based on the following retrieved information: ${result}`;
 
