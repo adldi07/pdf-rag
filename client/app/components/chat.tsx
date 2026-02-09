@@ -9,6 +9,7 @@ type Message = {
   id: string;
   role: 'user' | 'assistant';
   content: string;
+  retrievedInfo?: any[];
 };
 
 export function Chat() {
@@ -54,6 +55,7 @@ export function Chat() {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
           content: data.response,
+          retrievedInfo: data.retrievedInfo,
         };
         setMessages((prev) => [...prev, assistantMessage]);
       } else {
@@ -111,15 +113,61 @@ export function Chat() {
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-fadeIn`}
             >
               <div
-                className={`max-w-xs lg:max-w-md xl:max-w-lg px-4 py-3 rounded-2xl shadow-sm transition-all ${
-                  message.role === 'user'
-                    ? 'bg-blue-600 text-white rounded-br-md'
-                    : 'bg-white text-slate-900 border border-slate-200 rounded-bl-md'
-                }`}
+                className={`max-w-xs lg:max-w-md xl:max-w-2xl px-4 py-3 rounded-2xl shadow-sm transition-all ${message.role === 'user'
+                  ? 'bg-blue-600 text-white rounded-br-md'
+                  : 'bg-white text-slate-900 border border-slate-200 rounded-bl-md'
+                  }`}
               >
                 <p className={`text-sm leading-relaxed ${message.role === 'user' ? 'text-white' : 'text-slate-700'}`}>
                   {message.content}
                 </p>
+
+                {/* Retrieved Info Section */}
+                {message.role === 'assistant' && message.retrievedInfo && message.retrievedInfo.length > 0 && (
+                  <div className="mt-6 pt-6 border-t border-slate-100">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-1 h-3 bg-blue-500 rounded-full"></div>
+                      <p className="text-[11px] uppercase tracking-[0.1em] font-bold text-slate-400">Context & Sources</p>
+                    </div>
+
+                    <div className="grid gap-3">
+                      {message.retrievedInfo.map((info: any, idx: number) => {
+                        const source = info.metadata?.source || '';
+                        const fileName = source.split(/[\\/]/).pop() || 'Unknown Document';
+                        const page = info.metadata?.loc?.pageNumber || info.metadata?.page;
+
+                        return (
+                          <div key={idx} className="group relative bg-slate-50/50 hover:bg-white rounded-xl p-4 border border-slate-100 transition-all duration-200 hover:shadow-md hover:border-blue-100">
+                            {/* Metadata Header */}
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-2">
+                                <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-md border border-blue-100">
+                                  SOURCE {idx + 1}
+                                </span>
+                                <span className="text-[10px] text-slate-500 font-medium truncate max-w-[150px]">
+                                  {fileName}
+                                </span>
+                              </div>
+                              {page !== undefined && (
+                                <span className="flex items-center gap-1.5 text-[10px] font-bold text-slate-600 bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-sm">
+                                  <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></span>
+                                  PAGE {page}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Content Snippet */}
+                            <div className="relative">
+                              <p className="text-xs text-slate-600 leading-relaxed italic pr-2 border-l-2 border-slate-200 pl-3">
+                                "{typeof info === 'string' ? info : (info.pageContent || 'No text content available')}"
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ))
