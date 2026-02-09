@@ -93,6 +93,7 @@ app.post('/upload/pdf', upload.single('pdf'), async (req, res) => {
         console.log(`Adding job to queue for file: ${req.file.originalname}`);
         const job = await queue.add('file-ready', {
             fileUrl,
+            fileKey: key, // Added this
             fileName: req.file.originalname,
         });
         console.log(`Job added: ${job.id}`);
@@ -121,6 +122,7 @@ app.get('/chat', async (req, res) => {
     const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
         url: process.env.QDRANT_URL,
         apiKey: process.env.QDRANT_API,
+        checkCompatibility: false,
         collectionName: "pdf-rag",
     });
 
