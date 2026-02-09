@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon --watch index.js",
-    "worker": "nodemon --watch worker.js"
+    "worker": "nodemon --watch worker.js",
+    "start": "node index.js",
+    "start:worker": "node worker.js"
   },
   "keywords": [],
   "author": "",
