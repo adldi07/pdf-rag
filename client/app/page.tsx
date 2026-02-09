@@ -47,7 +47,7 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen w-screen flex bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900 overflow-hidden">
+    <div className="h-[calc(100vh-64px)] w-screen flex bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900 overflow-hidden">
       <SignedOut>
         {/* Modern Premium Landing Page */}
         <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">

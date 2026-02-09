@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { 
+import {
   ClerkProvider,
   SignInButton,
   SignUpButton,
   SignedIn,
   SignedOut,
   UserButton,
- } from '@clerk/nextjs'
+} from '@clerk/nextjs'
+import { FileText } from "lucide-react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,27 +32,47 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <ClerkProvider>
+    <ClerkProvider>
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-            <header className="flex justify-end items-center p-4 gap-4 h-16">
-              {/* Show the sign-in and sign-up buttons when the user is signed out */}
+          <header className="flex justify-between items-center px-8 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <FileText className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xl font-black text-slate-900 tracking-tight">PDF<span className="text-blue-600">RAG</span></span>
+            </div>
+
+            <div className="flex items-center gap-4">
               <SignedOut>
-                <SignInButton />
-                <SignUpButton>
-                  <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                    Sign Up
+                <SignInButton mode="modal">
+                  <button className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer">
+                    Sign In
+                  </button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                  <button className="bg-slate-900 text-white px-5 py-2 rounded-xl font-bold text-sm hover:bg-slate-800 transition-all hover:shadow-lg active:scale-95 cursor-pointer">
+                    Get Started
                   </button>
                 </SignUpButton>
               </SignedOut>
-              {/* Show the user button when the user is signed in */}
               <SignedIn>
-                <UserButton />
+                <div className="flex items-center gap-4">
+                  <div className="h-8 w-[1px] bg-slate-200"></div>
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        userButtonAvatarBox: "w-9 h-9 rounded-xl border-2 border-white shadow-md"
+                      }
+                    }}
+                  />
+                </div>
               </SignedIn>
-            </header>
-            {children}
-          </body>
-        </html>
-      </ClerkProvider>
+            </div>
+          </header>
+          {children}
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

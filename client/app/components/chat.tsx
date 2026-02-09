@@ -82,14 +82,19 @@ export function Chat() {
   return (
     <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <MessageCircle className="w-5 h-5 text-blue-600" />
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900">PDF Assistant</h2>
-            <p className="text-sm text-slate-500">Ask questions about your document</p>
+      <div className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 px-6 py-4 sticky top-0 z-10">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-blue-600 rounded-xl shadow-lg shadow-blue-500/20">
+              <MessageCircle className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight">PDF Intelligence</h2>
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                <p className="text-xs font-semibold text-slate-500">AI Expert Online</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -125,47 +130,54 @@ export function Chat() {
                 {/* Retrieved Info Section */}
                 {message.role === 'assistant' && message.retrievedInfo && message.retrievedInfo.length > 0 && (
                   <div className="mt-6 pt-6 border-t border-slate-100">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-1 h-3 bg-blue-500 rounded-full"></div>
-                      <p className="text-[11px] uppercase tracking-[0.1em] font-bold text-slate-400">Context & Sources</p>
-                    </div>
+                    <details className="group/details">
+                      <summary className="flex items-center justify-between cursor-pointer list-none">
+                        <div className="flex items-center gap-2">
+                          <div className="w-1.5 h-4 bg-blue-500 rounded-full"></div>
+                          <p className="text-[11px] uppercase tracking-[0.1em] font-bold text-slate-400">Context & Sources</p>
+                        </div>
+                        <div className="text-slate-400 group-open/details:rotate-180 transition-transform duration-300">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                        </div>
+                      </summary>
 
-                    <div className="grid gap-3">
-                      {message.retrievedInfo.map((info: any, idx: number) => {
-                        const source = info.metadata?.source || '';
-                        const fileName = source.split(/[\\/]/).pop() || 'Unknown Document';
-                        const page = info.metadata?.loc?.pageNumber || info.metadata?.page;
+                      <div className="grid gap-3 mt-4 overflow-hidden animate-fadeIn">
+                        {message.retrievedInfo.map((info: any, idx: number) => {
+                          const source = info.metadata?.source || '';
+                          const fileName = source.split(/[\\/]/).pop() || 'Unknown Document';
+                          const page = info.metadata?.loc?.pageNumber || info.metadata?.page;
 
-                        return (
-                          <div key={idx} className="group relative bg-slate-50/50 hover:bg-white rounded-xl p-4 border border-slate-100 transition-all duration-200 hover:shadow-md hover:border-blue-100">
-                            {/* Metadata Header */}
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-2">
-                                <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-md border border-blue-100">
-                                  SOURCE {idx + 1}
-                                </span>
-                                <span className="text-[10px] text-slate-500 font-medium truncate max-w-[150px]">
-                                  {fileName}
-                                </span>
+                          return (
+                            <div key={idx} className="group relative bg-slate-50/50 hover:bg-white rounded-xl p-4 border border-slate-100 transition-all duration-200 hover:shadow-md hover:border-blue-100">
+                              {/* Metadata Header */}
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-md border border-blue-100">
+                                    SOURCE {idx + 1}
+                                  </span>
+                                  <span className="text-[10px] text-slate-500 font-medium truncate max-w-[150px]">
+                                    {fileName}
+                                  </span>
+                                </div>
+                                {page !== undefined && (
+                                  <span className="flex items-center gap-1.5 text-[10px] font-bold text-slate-600 bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-sm">
+                                    <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></span>
+                                    PAGE {page}
+                                  </span>
+                                )}
                               </div>
-                              {page !== undefined && (
-                                <span className="flex items-center gap-1.5 text-[10px] font-bold text-slate-600 bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-sm">
-                                  <span className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></span>
-                                  PAGE {page}
-                                </span>
-                              )}
-                            </div>
 
-                            {/* Content Snippet */}
-                            <div className="relative">
-                              <p className="text-xs text-slate-600 leading-relaxed italic pr-2 border-l-2 border-slate-200 pl-3">
-                                "{typeof info === 'string' ? info : (info.pageContent || 'No text content available')}"
-                              </p>
+                              {/* Content Snippet */}
+                              <div className="relative">
+                                <p className="text-xs text-slate-600 leading-relaxed italic pr-2 border-l-2 border-slate-200 pl-3">
+                                  "{typeof info === 'string' ? info : (info.pageContent || 'No text content available')}"
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                          );
+                        })}
+                      </div>
+                    </details>
                   </div>
                 )}
               </div>
@@ -198,7 +210,7 @@ export function Chat() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask a question..."
             disabled={loading}
-            className="flex-1 px-4 py-3 border border-slate-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-slate-100 disabled:text-slate-500 transition-all placeholder-slate-400"
+            className="flex-1 px-5 py-4 border border-slate-200 rounded-[1.5rem] focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 disabled:bg-slate-50 disabled:text-slate-400 transition-all placeholder-slate-400 text-slate-900 font-semibold shadow-inner"
           />
           <button
             type="submit"
