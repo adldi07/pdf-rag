@@ -52,18 +52,18 @@ export default function Home() {
   };
 
   return (
-    <div className="h-[calc(100vh-52px)] w-screen flex bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900 overflow-hidden">
+    <div className="h-[calc(100vh-48px)] w-full flex bg-slate-50 font-sans selection:bg-blue-100 selection:text-blue-900">
       <SignedOut>
         {/* Modern Premium Landing Page */}
-        <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
+        <div className="flex-1 flex flex-col items-center p-6 lg:p-12 relative overflow-y-auto scrollbar-hide">
           {/* Dynamic Background Elements */}
-          <div className="absolute top-0 left-0 w-full h-full bg-[#fafafa]"></div>
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/10 rounded-full blur-[120px] animate-pulse"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-400/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute inset-0 bg-[#fafafa] -z-10"></div>
+          <div className="absolute top-0 left-0 w-[50%] h-[50%] bg-blue-400/10 rounded-full blur-[120px] animate-pulse"></div>
+          <div className="absolute bottom-0 right-0 w-[50%] h-[50%] bg-indigo-400/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
 
           {/* Glassmorphism Card */}
-          <div className="relative z-10 max-w-xl w-full mx-4">
-            <div className="bg-white/70 backdrop-blur-2xl border border-white/40 rounded-[2.5rem] p-12 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] text-center animate-fadeIn">
+          <div className="relative z-10 max-w-xl w-full my-auto py-8">
+            <div className="bg-white/70 backdrop-blur-2xl border border-white/40 rounded-[2.5rem] p-10 lg:p-14 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] text-center animate-fadeIn">
 
               {/* Icon Container with Gradient */}
               <div className="relative mx-auto w-24 h-24 mb-10 group">
@@ -73,12 +73,12 @@ export default function Home() {
                 </div>
               </div>
 
-              <h1 className="text-5xl font-black text-slate-900 mb-6 tracking-tight leading-[1.1]">
+              <h1 className="text-4xl lg:text-6xl font-black text-slate-900 mb-6 tracking-tight leading-[1.05]">
                 Master Your docs. <br />
-                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Privately.</span>
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent italic">Privately.</span>
               </h1>
 
-              <p className="text-lg text-slate-500 mb-12 leading-relaxed max-w-md mx-auto font-medium">
+              <p className="text-base lg:text-lg text-slate-500 mb-10 leading-relaxed max-w-md mx-auto font-medium">
                 The ultimate AI-powered research assistant for your PDF collection. Connect, chat, and uncover insights in seconds.
               </p>
 
@@ -107,24 +107,24 @@ export default function Home() {
               </div>
 
               {/* Feature Tags */}
-              <div className="mt-16 pt-10 border-t border-slate-100/60 grid grid-cols-3 gap-4">
-                <div className="flex flex-col items-center gap-2 group">
-                  <div className="p-3 bg-slate-50 rounded-xl group-hover:bg-blue-50 transition-colors duration-300">
-                    <CheckCircle className="w-5 h-5 text-blue-600" />
+              <div className="mt-12 pt-8 border-t border-slate-100/60 grid grid-cols-3 gap-2 lg:gap-4">
+                <div className="flex flex-col items-center gap-1.5 group">
+                  <div className="p-2.5 bg-slate-50 rounded-xl group-hover:bg-blue-50 transition-colors duration-300">
+                    <CheckCircle className="w-4 lg:w-5 h-4 lg:h-5 text-blue-600" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Pure RAG</span>
+                  <span className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-400">Pure RAG</span>
                 </div>
-                <div className="flex flex-col items-center gap-2 group">
-                  <div className="p-3 bg-slate-50 rounded-xl group-hover:bg-indigo-50 transition-colors duration-300">
-                    <FileText className="w-5 h-5 text-indigo-600" />
+                <div className="flex flex-col items-center gap-1.5 group">
+                  <div className="p-2.5 bg-slate-50 rounded-xl group-hover:bg-indigo-50 transition-colors duration-300">
+                    <FileText className="w-4 lg:w-5 h-4 lg:h-5 text-indigo-600" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Contextual</span>
+                  <span className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-400">Contextual</span>
                 </div>
-                <div className="flex flex-col items-center gap-2 group">
-                  <div className="p-3 bg-slate-50 rounded-xl group-hover:bg-emerald-50 transition-colors duration-300">
-                    <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                <div className="flex flex-col items-center gap-1.5 group">
+                  <div className="p-2.5 bg-slate-50 rounded-xl group-hover:bg-emerald-50 transition-colors duration-300">
+                    <ShieldCheck className="w-4 lg:w-5 h-4 lg:h-5 text-emerald-600" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Encrypted</span>
+                  <span className="text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-slate-400">Encrypted</span>
                 </div>
               </div>
             </div>
@@ -138,7 +138,7 @@ export default function Home() {
 
       <SignedIn>
         {/* Mobile Tab Switcher */}
-        <div className="lg:hidden fixed top-13 left-0 right-0 h-14 bg-white border-b border-slate-200/60 flex z-30 shadow-sm">
+        <div className="lg:hidden fixed top-12 left-0 right-0 h-14 bg-white border-b border-slate-200/60 flex z-30 shadow-sm">
           <button
             onClick={() => setActiveTab('chat')}
             className={`flex-1 flex items-center justify-center gap-2 font-bold text-xs transition-all ${activeTab === 'chat' ? 'text-blue-600' : 'text-slate-400'}`}
