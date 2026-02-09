@@ -133,14 +133,15 @@ export default function Home() {
 
       <SignedIn>
         {/* Application Dashboard */}
-        <div className="w-[30vw] h-full bg-white flex flex-col items-center justify-center px-6 border-r border-slate-200/60 shadow-xl shadow-slate-200/20 animate-fadeIn shrink-0 overflow-y-auto">
-          {/* Header */}
-          <div className="mb-10 text-center">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-[1.25rem] flex items-center justify-center mx-auto mb-5 shadow-lg shadow-blue-500/20">
-              <FileText className="w-7 h-7 text-white" />
+        <div className="w-[30vw] h-full bg-white flex flex-col items-center pt-12 px-8 border-r border-slate-200/60 shadow-xl shadow-slate-200/20 animate-fadeIn shrink-0 overflow-y-auto">
+          {/* Section Label */}
+          <div className="w-full max-w-sm mb-8">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+              <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Workspace</span>
             </div>
-            <h1 className="text-3xl font-black text-slate-900 mb-2 tracking-tight">PDF RAG</h1>
-            <p className="text-slate-500 text-sm font-medium">Knowledge in every pixel</p>
+            <h2 className="text-2xl font-bold text-slate-900">Knowledge Base</h2>
+            <p className="text-slate-500 text-sm font-medium mt-1">Upload and manage your documents</p>
           </div>
 
           {/* Upload Component */}
