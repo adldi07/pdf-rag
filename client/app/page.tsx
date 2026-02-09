@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FileUpload } from './components/file-upload';
 import { Chat } from './components/chat';
-import { CheckCircle, AlertCircle, Clock, FileText, Lock, ArrowRight, ShieldCheck, Menu, X } from 'lucide-react';
+import { CheckCircle, AlertCircle, Clock, FileText, Lock, ArrowRight, ShieldCheck, LayoutDashboard, MessageSquare } from 'lucide-react';
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from '@clerk/nextjs';
 
 import { useAuth } from '@clerk/nextjs';
@@ -13,7 +13,7 @@ export default function Home() {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error' | ''>('');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'chat' | 'knowledge'>('chat');
 
   const handleFilesSelected = async (files: File[]) => {
     if (files.length === 0 || uploading || !userId) return;
@@ -137,28 +137,31 @@ export default function Home() {
       </SignedOut>
 
       <SignedIn>
-        {/* Mobile Toggle Button */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="lg:hidden fixed bottom-6 right-6 z-50 p-4 bg-blue-600 text-white rounded-full shadow-2xl active:scale-95 transition-all"
-        >
-          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+        {/* Mobile Tab Switcher */}
+        <div className="lg:hidden fixed top-13 left-0 right-0 h-14 bg-white border-b border-slate-200/60 flex z-30 shadow-sm">
+          <button
+            onClick={() => setActiveTab('chat')}
+            className={`flex-1 flex items-center justify-center gap-2 font-bold text-xs transition-all ${activeTab === 'chat' ? 'text-blue-600' : 'text-slate-400'}`}
+          >
+            <MessageSquare className={`w-4 h-4 ${activeTab === 'chat' ? 'text-blue-600' : 'text-slate-400'}`} />
+            Chat
+            {activeTab === 'chat' && <div className="absolute bottom-0 w-12 h-1 bg-blue-600 rounded-t-full"></div>}
+          </button>
+          <button
+            onClick={() => setActiveTab('knowledge')}
+            className={`flex-1 flex items-center justify-center gap-2 font-bold text-xs transition-all ${activeTab === 'knowledge' ? 'text-blue-600' : 'text-slate-400'}`}
+          >
+            <LayoutDashboard className={`w-4 h-4 ${activeTab === 'knowledge' ? 'text-blue-600' : 'text-slate-400'}`} />
+            Library
+            {activeTab === 'knowledge' && <div className="absolute bottom-0 w-12 h-1 bg-blue-600 rounded-t-full"></div>}
+          </button>
+        </div>
 
-        {/* Backdrop for mobile */}
-        {sidebarOpen && (
-          <div
-            className="lg:hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 transition-opacity"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {/* Application Dashboard (Sidebar) */}
+        {/* Knowledge Base Section */}
         <div className={`
-          fixed inset-y-0 left-0 z-40 w-80 bg-white flex flex-col items-center pt-20 lg:pt-8 px-6 border-r border-slate-200/60 shadow-[4px_0_24px_-12px_rgba(0,0,0,0.05)] 
-          transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-          lg:static lg:h-full shrink-0 overflow-y-auto
+          flex-col items-center pt-8 px-6 lg:w-80 lg:shrink-0 lg:border-r lg:border-slate-200/60 lg:bg-white lg:shadow-[4px_0_24px_-12px_rgba(0,0,0,0.05)]
+          ${activeTab === 'knowledge' ? 'flex w-full pt-18' : 'hidden lg:flex'}
+          lg:h-full lg:pt-8 bg-slate-50/50 lg:bg-white overflow-y-auto
         `}>
           {/* Section Label */}
           <div className="w-full max-w-sm mb-8">
@@ -235,8 +238,11 @@ export default function Home() {
           )}
         </div>
 
-        {/* Right Section - Chat */}
-        <div className="flex-1 h-full bg-slate-50/30 animate-fadeIn overflow-hidden">
+        {/* Chat Section */}
+        <div className={`
+          flex-1 h-full bg-slate-50/30 animate-fadeIn overflow-hidden
+          ${activeTab === 'chat' ? 'block pt-14 lg:pt-0' : 'hidden lg:block'}
+        `}>
           <Chat />
         </div>
       </SignedIn>
