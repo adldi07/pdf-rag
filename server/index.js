@@ -90,13 +90,32 @@ app.post('/upload/pdf', upload.single('pdf'), async (req, res) => {
 
         const fileUrl = `https://${process.env.AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
-        console.log(`Adding job to queue for file: ${req.file.originalname}`);
+        const { userId } = req.body;
+        const uploadId = Date.now().toString();
+        const EXPIRATION_TIME = 24 * 60 * 60 * 1000; // 24 Hours
+
+        console.log(`Adding job to queue for file: ${req.file.originalname} (User: ${userId}, ID: ${uploadId})`);
+
+        // 1. Job to process the PDF
         const job = await queue.add('file-ready', {
             fileUrl,
-            fileKey: key, // Added this
+            fileKey: key,
             fileName: req.file.originalname,
+            userId,
+            uploadId
         });
-        console.log(`Job added: ${job.id}`);
+
+        // 2. Job to delete the PDF after expiration
+        await queue.add('cleanup-doc', {
+            userId,
+            uploadId,
+            fileName: req.file.originalname,
+            fileKey: key
+        }, {
+            delay: EXPIRATION_TIME
+        });
+
+        console.log(`Job added: ${job.id}. Cleanup scheduled in 24h.`);
 
         return res.send("File uploaded successfully");
 
@@ -111,8 +130,8 @@ app.post('/upload/pdf', upload.single('pdf'), async (req, res) => {
 
 app.get('/chat', async (req, res) => {
     const userQuery = req.query.message;
-    // const userQuery = `what is lorem ipsum?`;
-
+    const userId = req.query.userId;
+    console.log(`[Chat] Query from User: ${userId} - "${userQuery}"`);
 
     const embeddings = new OpenAIEmbeddings({
         model: "text-embedding-3-large",
@@ -128,7 +147,16 @@ app.get('/chat', async (req, res) => {
 
 
     const retriever = vectorStore.asRetriever({
-        // Optional filtering parameters can be added here
+        filter: {
+            must: [
+                {
+                    key: "metadata.userId",
+                    match: {
+                        value: userId
+                    }
+                }
+            ]
+        },
         k: 2,
     });
 

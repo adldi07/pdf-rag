@@ -2,7 +2,7 @@ import { Worker } from 'bullmq';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import http from 'http';
 
 dotenv.config();
@@ -79,7 +79,6 @@ const worker = new Worker('file-upload-queue', async (job) => {
                 return;
             }
 
-            // 5. Vector Store
             console.log(`[5/5] Initializing embeddings and connecting to Qdrant...`);
             console.log(`Target URL: ${process.env.QDRANT_URL}`);
 
@@ -97,8 +96,41 @@ const worker = new Worker('file-upload-queue', async (job) => {
                 checkCompatibility: false, // Disabling version check to avoid compatibility errors
             });
 
-            console.log(`Adding ${texts.length} chunks to Qdrant...`);
-            const result = await vectorStore.addDocuments(texts);
+            // 4.5 DELETE OLD EMBEDDINGS FOR THIS USER (Option 2 implementation)
+            if (job.data.userId) {
+                console.log(`🧹 Cleaning up old embeddings for user: ${job.data.userId}...`);
+                try {
+                    await vectorStore.client.delete("pdf-rag", {
+                        filter: {
+                            must: [
+                                {
+                                    key: "metadata.userId",
+                                    match: {
+                                        value: job.data.userId
+                                    }
+                                }
+                            ]
+                        }
+                    });
+                    console.log(`✅ Old embeddings cleared.`);
+                } catch (deleteError) {
+                    console.error(`⚠️ Non-critical: Failed to clear old embeddings:`, deleteError.message);
+                }
+            }
+
+            console.log(`Adding ${texts.length} chunks to Qdrant for user: ${job.data.userId}...`);
+
+            // Add userId and uploadId context to each chunk's metadata
+            const textsWithAuth = texts.map(doc => ({
+                ...doc,
+                metadata: {
+                    ...doc.metadata,
+                    userId: job.data.userId,
+                    uploadId: job.data.uploadId
+                }
+            }));
+
+            const result = await vectorStore.addDocuments(textsWithAuth);
             console.log('✅ SUCCESS: Documents added to Qdrant vector store:', result);
 
             // Clean up temp file
@@ -108,6 +140,42 @@ const worker = new Worker('file-upload-queue', async (job) => {
 
         } catch (error) {
             console.error(`❌ WORKER FAILED at job ${job.id}:`, error.message);
+        }
+    } else if (job.name === 'cleanup-doc') {
+        try {
+            const { userId, uploadId, fileKey } = job.data;
+            console.log(`[Expiry] Cleaning up expired doc for user ${userId}, upload ${uploadId}`);
+
+            // 1. Delete from Qdrant
+            const embeddings = new OpenAIEmbeddings({ openAIApiKey: process.env.OPENAI_API_KEY });
+            const vectorStore = await QdrantVectorStore.fromExistingCollection(embeddings, {
+                url: process.env.QDRANT_URL,
+                apiKey: process.env.QDRANT_API,
+                collectionName: "pdf-rag",
+                checkCompatibility: false,
+            });
+
+            await vectorStore.client.delete("pdf-rag", {
+                filter: {
+                    must: [
+                        { key: "metadata.userId", match: { value: userId } },
+                        { key: "metadata.uploadId", match: { value: uploadId } }
+                    ]
+                }
+            });
+            console.log(`[Expiry] Vector embeddings deleted.`);
+
+            // 2. Delete from S3 if fileKey exists
+            if (fileKey) {
+                await s3.send(new DeleteObjectCommand({
+                    Bucket: process.env.AWS_S3_BUCKET,
+                    Key: fileKey,
+                }));
+                console.log(`[Expiry] S3 file deleted: ${fileKey}`);
+            }
+
+        } catch (error) {
+            console.error(`❌ CLEANUP FAILED:`, error.message);
         }
     }
 },

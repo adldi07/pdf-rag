@@ -12,7 +12,10 @@ type Message = {
   retrievedInfo?: any[];
 };
 
+import { useAuth } from '@clerk/nextjs';
+
 export function Chat() {
+  const { userId } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,7 +31,7 @@ export function Chat() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || loading) return;
+    if (!input.trim() || loading || !userId) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -43,6 +46,7 @@ export function Chat() {
     try {
       const params = new URLSearchParams({
         message: userMessage.content,
+        userId: userId || '',
       });
       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
       const response = await fetch(`${backendUrl}/chat?${params}`, {

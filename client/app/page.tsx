@@ -6,17 +6,21 @@ import { Chat } from './components/chat';
 import { CheckCircle, AlertCircle, Clock, FileText, Lock, ArrowRight, ShieldCheck } from 'lucide-react';
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from '@clerk/nextjs';
 
+import { useAuth } from '@clerk/nextjs';
+
 export default function Home() {
+  const { userId } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error' | ''>('');
 
   const handleFilesSelected = async (files: File[]) => {
-    if (files.length === 0 || uploading) return;
+    if (files.length === 0 || uploading || !userId) return;
 
     const file = files[0];
     const formData = new FormData();
     formData.append('pdf', file);
+    formData.append('userId', userId);
 
     setUploading(true);
     setMessage('');
